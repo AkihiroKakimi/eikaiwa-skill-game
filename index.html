@@ -1,415 +1,533 @@
-import React, { useState, useEffect } from 'react';
-import { Volume2, Star, Trophy, Mic, RotateCcw } from 'lucide-react';
-
-const EnglishSpeakingGame = () => {
-  const [currentScene, setCurrentScene] = useState('menu');
-  const [score, setScore] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isListening, setIsListening] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  const [showAnswer, setShowAnswer] = useState(false);
-
-  const categories = {
-    animals: {
-      name: '動物たち',
-      emoji: '🐾',
-      color: 'bg-green-400',
-      questions: [
-        {
-          question: "What sound does a cat make?",
-          japanese: "猫はどんな鳴き声？",
-          answer: "meow",
-          alternatives: ["mew", "meow meow"],
-          image: "🐱"
-        },
-        {
-          question: "What sound does a dog make?",
-          japanese: "犬はどんな鳴き声？",
-          answer: "woof",
-          alternatives: ["bow wow", "woof woof", "bark"],
-          image: "🐶"
-        },
-        {
-          question: "What color is an elephant?",
-          japanese: "象は何色？",
-          answer: "gray",
-          alternatives: ["grey"],
-          image: "🐘"
-        },
-        {
-          question: "Where do birds live?",
-          japanese: "鳥はどこに住んでいる？",
-          answer: "tree",
-          alternatives: ["trees", "nest", "sky"],
-          image: "🐦"
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英語でおしゃべりゲーム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         }
-      ]
-    },
-    food: {
-      name: '食べもの',
-      emoji: '🍎',
-      color: 'bg-red-400',
-      questions: [
-        {
-          question: "What color is an apple?",
-          japanese: "りんごは何色？",
-          answer: "red",
-          alternatives: ["green", "yellow"],
-          image: "🍎"
-        },
-        {
-          question: "What do you drink when you're thirsty?",
-          japanese: "のどが渇いたら何を飲む？",
-          answer: "water",
-          alternatives: ["juice", "milk"],
-          image: "💧"
-        },
-        {
-          question: "What do bees make?",
-          japanese: "ハチは何を作る？",
-          answer: "honey",
-          alternatives: [],
-          image: "🍯"
-        },
-        {
-          question: "What's yellow and long?",
-          japanese: "黄色くて長いものは？",
-          answer: "banana",
-          alternatives: [],
-          image: "🍌"
+        .animate-bounce {
+            animation: bounce 1s infinite;
         }
-      ]
-    },
-    colors: {
-      name: '色',
-      emoji: '🌈',
-      color: 'bg-purple-400',
-      questions: [
-        {
-          question: "What color is the sun?",
-          japanese: "太陽は何色？",
-          answer: "yellow",
-          alternatives: ["orange"],
-          image: "☀️"
-        },
-        {
-          question: "What color is grass?",
-          japanese: "草は何色？",
-          answer: "green",
-          alternatives: [],
-          image: "🌱"
-        },
-        {
-          question: "What color is the sky?",
-          japanese: "空は何色？",
-          answer: "blue",
-          alternatives: [],
-          image: "☁️"
-        },
-        {
-          question: "What color is snow?",
-          japanese: "雪は何色？",
-          answer: "white",
-          alternatives: [],
-          image: "❄️"
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0,-30px,0);
+            }
+            70% {
+                transform: translate3d(0,-15px,0);
+            }
+            90% {
+                transform: translate3d(0,-4px,0);
+            }
         }
-      ]
-    }
-  };
+        .hover-scale {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-scale:hover {
+            transform: scale(1.05) translateY(-2px);
+        }
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            }
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+            }
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        .game-background {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
 
-  const playSound = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      speechSynthesis.speak(utterance);
-    }
-  };
+    <script>
+        // ゲーム状態管理
+        let gameState = {
+            currentScene: 'menu',
+            score: 0,
+            currentQuestion: 0,
+            selectedCategory: null,
+            isListening: false,
+            feedback: '',
+            showAnswer: false
+        };
 
-  const startListening = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setFeedback('ごめんね！このブラウザは音声認識に対応していないよ。でも答えを見ることはできるよ！');
-      return;
-    }
+        // カテゴリーデータ
+        const categories = {
+            animals: {
+                name: '動物たち',
+                emoji: '🐾',
+                color: 'bg-gradient-to-br from-green-400 to-green-600',
+                questions: [
+                    {
+                        question: "What sound does a cat make?",
+                        japanese: "猫はどんな鳴き声？",
+                        answer: "meow",
+                        alternatives: ["mew", "meow meow"],
+                        image: "🐱"
+                    },
+                    {
+                        question: "What sound does a dog make?",
+                        japanese: "犬はどんな鳴き声？",
+                        answer: "woof",
+                        alternatives: ["bow wow", "woof woof", "bark"],
+                        image: "🐶"
+                    },
+                    {
+                        question: "What color is an elephant?",
+                        japanese: "象は何色？",
+                        answer: "gray",
+                        alternatives: ["grey"],
+                        image: "🐘"
+                    },
+                    {
+                        question: "Where do birds live?",
+                        japanese: "鳥はどこに住んでいる？",
+                        answer: "tree",
+                        alternatives: ["trees", "nest", "sky"],
+                        image: "🐦"
+                    }
+                ]
+            },
+            food: {
+                name: '食べもの',
+                emoji: '🍎',
+                color: 'bg-gradient-to-br from-red-400 to-red-600',
+                questions: [
+                    {
+                        question: "What color is an apple?",
+                        japanese: "りんごは何色？",
+                        answer: "red",
+                        alternatives: ["green", "yellow"],
+                        image: "🍎"
+                    },
+                    {
+                        question: "What do you drink when you're thirsty?",
+                        japanese: "のどが渇いたら何を飲む？",
+                        answer: "water",
+                        alternatives: ["juice", "milk"],
+                        image: "💧"
+                    },
+                    {
+                        question: "What do bees make?",
+                        japanese: "ハチは何を作る？",
+                        answer: "honey",
+                        alternatives: [],
+                        image: "🍯"
+                    },
+                    {
+                        question: "What's yellow and long?",
+                        japanese: "黄色くて長いものは？",
+                        answer: "banana",
+                        alternatives: [],
+                        image: "🍌"
+                    }
+                ]
+            },
+            colors: {
+                name: '色',
+                emoji: '🌈',
+                color: 'bg-gradient-to-br from-purple-400 to-purple-600',
+                questions: [
+                    {
+                        question: "What color is the sun?",
+                        japanese: "太陽は何色？",
+                        answer: "yellow",
+                        alternatives: ["orange"],
+                        image: "☀️"
+                    },
+                    {
+                        question: "What color is grass?",
+                        japanese: "草は何色？",
+                        answer: "green",
+                        alternatives: [],
+                        image: "🌱"
+                    },
+                    {
+                        question: "What color is the sky?",
+                        japanese: "空は何色？",
+                        answer: "blue",
+                        alternatives: [],
+                        image: "☁️"
+                    },
+                    {
+                        question: "What color is snow?",
+                        japanese: "雪は何色？",
+                        answer: "white",
+                        alternatives: [],
+                        image: "❄️"
+                    }
+                ]
+            }
+        };
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    
-    recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+        // 音声関連関数
+        function playSound(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
 
-    setIsListening(true);
-    setFeedback('英語で答えてね！聞いているよ...');
+        function startListening() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                updateState({
+                    feedback: 'ごめんね！このブラウザは音声認識に対応していないよ。でも答えを見ることはできるよ！'
+                });
+                render();
+                return;
+            }
 
-    recognition.onresult = (event) => {
-      const userAnswer = event.results[0][0].transcript.toLowerCase().trim();
-      checkAnswer(userAnswer);
-    };
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
 
-    recognition.onerror = () => {
-      setIsListening(false);
-      setFeedback('うまく聞こえなかったよ。もう一度試してみて！');
-    };
+            updateState({
+                isListening: true,
+                feedback: '英語で答えてね！聞いているよ...'
+            });
+            render();
 
-    recognition.onend = () => {
-      setIsListening(false);
-    };
+            recognition.onresult = (event) => {
+                const userAnswer = event.results[0][0].transcript.toLowerCase().trim();
+                checkAnswer(userAnswer);
+            };
 
-    recognition.start();
-  };
+            recognition.onerror = () => {
+                updateState({
+                    isListening: false,
+                    feedback: 'うまく聞こえなかったよ。もう一度試してみて！'
+                });
+                render();
+            };
 
-  const checkAnswer = (userAnswer) => {
-    const currentQ = categories[selectedCategory].questions[currentQuestion];
-    const correctAnswers = [currentQ.answer, ...currentQ.alternatives];
-    
-    const isCorrect = correctAnswers.some(answer => 
-      userAnswer.includes(answer.toLowerCase()) || answer.toLowerCase().includes(userAnswer)
-    );
+            recognition.onend = () => {
+                updateState({ isListening: false });
+                render();
+            };
 
-    if (isCorrect) {
-      setScore(score + 10);
-      setFeedback(`すごい！正解だよ！ "${userAnswer}" って言えたね！⭐`);
-      playSound("Great job!");
-      setTimeout(() => {
-        nextQuestion();
-      }, 2000);
-    } else {
-      setFeedback(`惜しい！もう一度挑戦してみよう。正解は "${currentQ.answer}" だよ。`);
-      playSound(currentQ.answer);
-    }
-  };
+            recognition.start();
+        }
 
-  const nextQuestion = () => {
-    if (currentQuestion < categories[selectedCategory].questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setFeedback('');
-      setShowAnswer(false);
-    } else {
-      setCurrentScene('result');
-    }
-  };
+        function checkAnswer(userAnswer) {
+            const currentQ = categories[gameState.selectedCategory].questions[gameState.currentQuestion];
+            const correctAnswers = [currentQ.answer, ...currentQ.alternatives];
+            
+            const isCorrect = correctAnswers.some(answer => 
+                userAnswer.includes(answer.toLowerCase()) || answer.toLowerCase().includes(userAnswer)
+            );
 
-  const resetGame = () => {
-    setCurrentScene('menu');
-    setScore(0);
-    setCurrentQuestion(0);
-    setSelectedCategory(null);
-    setFeedback('');
-    setShowAnswer(false);
-  };
+            if (isCorrect) {
+                updateState({
+                    score: gameState.score + 10,
+                    feedback: `すごい！正解だよ！ "${userAnswer}" って言えたね！⭐`
+                });
+                playSound("Great job!");
+                render();
+                setTimeout(() => {
+                    nextQuestion();
+                }, 2000);
+            } else {
+                updateState({
+                    feedback: `惜しい！もう一度挑戦してみよう。正解は "${currentQ.answer}" だよ。`
+                });
+                playSound(currentQ.answer);
+                render();
+            }
+        }
 
-  const selectCategory = (category) => {
-    setSelectedCategory(category);
-    setCurrentScene('game');
-    setCurrentQuestion(0);
-    setScore(0);
-    setFeedback('');
-    setShowAnswer(false);
-  };
+        function nextQuestion() {
+            if (gameState.currentQuestion < categories[gameState.selectedCategory].questions.length - 1) {
+                updateState({
+                    currentQuestion: gameState.currentQuestion + 1,
+                    feedback: '',
+                    showAnswer: false
+                });
+            } else {
+                updateState({ currentScene: 'result' });
+            }
+            render();
+        }
 
-  if (currentScene === 'menu') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4 animate-bounce">
-              🎤 英語でおしゃべりゲーム 🎤
-            </h1>
-            <p className="text-xl text-white">
-              英語で答えて、スターを集めよう！
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(categories).map(([key, category]) => (
-              <button
-                key={key}
-                onClick={() => selectCategory(key)}
-                className={`${category.color} hover:scale-105 transform transition-all duration-200 rounded-xl p-6 text-white font-bold text-xl shadow-lg hover:shadow-xl`}
-              >
-                <div className="text-4xl mb-4">{category.emoji}</div>
-                <div>{category.name}</div>
-                <div className="text-sm mt-2 opacity-90">
-                  {category.questions.length}問
+        function resetGame() {
+            updateState({
+                currentScene: 'menu',
+                score: 0,
+                currentQuestion: 0,
+                selectedCategory: null,
+                feedback: '',
+                showAnswer: false
+            });
+            render();
+        }
+
+        function selectCategory(category) {
+            updateState({
+                selectedCategory: category,
+                currentScene: 'game',
+                currentQuestion: 0,
+                score: 0,
+                feedback: '',
+                showAnswer: false
+            });
+            render();
+        }
+
+        function updateState(newState) {
+            gameState = { ...gameState, ...newState };
+        }
+
+        // レンダリング関数
+        function renderMenu() {
+            return `
+                <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-12">
+                            <h1 class="text-6xl font-extrabold text-white mb-6 animate-bounce">
+                                🎤 英語でおしゃべりゲーム 🎤
+                            </h1>
+                            <p class="text-2xl text-white opacity-90 font-semibold">
+                                英語で答えて、スターを集めよう！✨
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-8 mb-12">
+                            ${Object.entries(categories).map(([key, category]) => `
+                                <button
+                                    onclick="selectCategory('${key}')"
+                                    class="${category.color} hover-scale transition-all duration-300 rounded-2xl p-8 text-white font-bold text-xl gradient-shadow border-2 border-white border-opacity-20"
+                                >
+                                    <div class="text-5xl mb-4">${category.emoji}</div>
+                                    <div class="text-2xl mb-2">${category.name}</div>
+                                    <div class="text-sm opacity-80 font-medium">
+                                        ${category.questions.length}問にチャレンジ！
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div class="text-center text-white glass-effect rounded-2xl p-6 max-w-2xl mx-auto gradient-shadow">
+                            <p class="text-xl mb-3 font-semibold">🎯 遊び方</p>
+                            <p class="text-base opacity-90 leading-relaxed">
+                                カテゴリーを選んで、英語で質問に答えよう！<br/>
+                                マイクボタンを押して話すか、答えを見ることもできるよ。<br/>
+                                正解するとスター⭐がもらえるよ！
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              </button>
-            ))}
-          </div>
+            `;
+        }
 
-          <div className="text-center mt-8 text-white">
-            <p className="text-lg mb-2">🎯 遊び方</p>
-            <p className="text-sm opacity-90">
-              カテゴリーを選んで、英語で質問に答えよう！<br/>
-              マイクボタンを押して話すか、答えを見ることもできるよ。
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+        function renderGame() {
+            const currentQ = categories[gameState.selectedCategory].questions[gameState.currentQuestion];
+            
+            return `
+                <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
+                    <div class="max-w-2xl mx-auto">
+                        <!-- ヘッダー -->
+                        <div class="flex justify-between items-center mb-6">
+                            <button
+                                onclick="resetGame()"
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                            >
+                                ↩️ メニューに戻る
+                            </button>
+                            <div class="flex items-center gap-4 text-white">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-yellow-300">⭐</span>
+                                    <span class="font-bold">${gameState.score}</span>
+                                </div>
+                                <div class="text-sm">
+                                    ${gameState.currentQuestion + 1} / ${categories[gameState.selectedCategory].questions.length}
+                                </div>
+                            </div>
+                        </div>
 
-  if (currentScene === 'game') {
-    const currentQ = categories[selectedCategory].questions[currentQuestion];
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
-        <div className="max-w-2xl mx-auto">
-          {/* ヘッダー */}
-          <div className="flex justify-between items-center mb-6">
-            <button
-              onClick={resetGame}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-            >
-              <RotateCcw size={16} />
-              メニューに戻る
-            </button>
-            <div className="flex items-center gap-4 text-white">
-              <div className="flex items-center gap-1">
-                <Star className="text-yellow-300" size={20} />
-                <span className="font-bold">{score}</span>
-              </div>
-              <div className="text-sm">
-                {currentQuestion + 1} / {categories[selectedCategory].questions.length}
-              </div>
-            </div>
-          </div>
+                        <!-- 質問カード -->
+                        <div class="bg-white rounded-3xl p-8 gradient-shadow mb-8">
+                            <div class="text-center mb-8">
+                                <div class="text-8xl mb-6 transform hover:scale-110 transition-transform duration-300">${currentQ.image}</div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                                    ${currentQ.question}
+                                </h2>
+                                <p class="text-xl text-gray-600 font-medium">
+                                    ${currentQ.japanese}
+                                </p>
+                            </div>
 
-          {/* 質問カード */}
-          <div className="bg-white rounded-xl p-8 shadow-xl mb-6">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">{currentQ.image}</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                {currentQ.question}
-              </h2>
-              <p className="text-gray-600">
-                {currentQ.japanese}
-              </p>
-            </div>
+                            <!-- 音声読み上げボタン -->
+                            <div class="text-center mb-8">
+                                <button
+                                    onclick="playSound('${currentQ.question.replace(/'/g, "\\'")}')"
+                                    class="btn-gradient hover-scale text-white px-8 py-4 rounded-xl font-bold text-lg gradient-shadow flex items-center gap-3 mx-auto"
+                                >
+                                    🔊 質問を聞く
+                                </button>
+                            </div>
 
-            {/* 音声読み上げボタン */}
-            <div className="text-center mb-6">
-              <button
-                onClick={() => playSound(currentQ.question)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto"
-              >
-                <Volume2 size={20} />
-                質問を聞く
-              </button>
-            </div>
+                            <!-- 回答ボタン -->
+                            <div class="flex justify-center gap-6 mb-8 flex-wrap">
+                                <button
+                                    onclick="startListening()"
+                                    ${gameState.isListening ? 'disabled' : ''}
+                                    class="${gameState.isListening ? 'bg-red-500 pulse-glow' : 'bg-green-500 hover:bg-green-600'} text-white px-8 py-4 rounded-xl font-bold text-lg hover-scale gradient-shadow flex items-center gap-3"
+                                >
+                                    🎤 ${gameState.isListening ? '聞いているよ...' : '英語で答える'}
+                                </button>
+                                
+                                <button
+                                    onclick="updateState({showAnswer: !gameState.showAnswer}); render();"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover-scale gradient-shadow"
+                                >
+                                    ${gameState.showAnswer ? '答えを隠す' : '答えを見る'}
+                                </button>
+                            </div>
 
-            {/* 回答ボタン */}
-            <div className="flex justify-center gap-4 mb-6">
-              <button
-                onClick={startListening}
-                disabled={isListening}
-                className={`${isListening ? 'bg-red-500' : 'bg-green-500 hover:bg-green-600'} text-white px-6 py-3 rounded-lg flex items-center gap-2 font-bold`}
-              >
-                <Mic size={20} />
-                {isListening ? '聞いているよ...' : '英語で答える'}
-              </button>
-              
-              <button
-                onClick={() => setShowAnswer(!showAnswer)}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg"
-              >
-                {showAnswer ? '答えを隠す' : '答えを見る'}
-              </button>
-            </div>
+                            <!-- 答え表示 -->
+                            ${gameState.showAnswer ? `
+                                <div class="text-center bg-gradient-to-r from-yellow-100 to-yellow-200 p-6 rounded-2xl mb-6 border-2 border-yellow-300 gradient-shadow">
+                                    <p class="text-xl font-bold text-gray-800 mb-3">
+                                        答え: <span class="text-blue-600 text-2xl">${currentQ.answer}</span>
+                                    </p>
+                                    ${currentQ.alternatives.length > 0 ? `
+                                        <p class="text-base text-gray-600 mb-4">
+                                            他の答え: <span class="font-semibold">${currentQ.alternatives.join(', ')}</span>
+                                        </p>
+                                    ` : ''}
+                                    <button
+                                        onclick="playSound('${currentQ.answer.replace(/'/g, "\\'")}')"
+                                        class="btn-gradient hover-scale text-white px-6 py-3 rounded-xl font-semibold gradient-shadow flex items-center gap-2 mx-auto"
+                                    >
+                                        🔊 発音を聞く
+                                    </button>
+                                </div>
+                            ` : ''}
 
-            {/* 答え表示 */}
-            {showAnswer && (
-              <div className="text-center bg-yellow-100 p-4 rounded-lg mb-4">
-                <p className="text-lg font-bold text-gray-800">
-                  答え: <span className="text-blue-600">{currentQ.answer}</span>
-                </p>
-                {currentQ.alternatives.length > 0 && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    他の答え: {currentQ.alternatives.join(', ')}
-                  </p>
-                )}
-                <button
-                  onClick={() => playSound(currentQ.answer)}
-                  className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-1 mx-auto"
-                >
-                  <Volume2 size={16} />
-                  発音を聞く
-                </button>
-              </div>
-            )}
+                            <!-- フィードバック -->
+                            ${gameState.feedback ? `
+                                <div class="text-center bg-gradient-to-r from-blue-100 to-blue-200 p-6 rounded-2xl mb-6 border-2 border-blue-300 gradient-shadow">
+                                    <p class="text-gray-800 font-semibold text-lg">${gameState.feedback}</p>
+                                </div>
+                            ` : ''}
 
-            {/* フィードバック */}
-            {feedback && (
-              <div className="text-center bg-blue-100 p-4 rounded-lg mb-4">
-                <p className="text-gray-800">{feedback}</p>
-              </div>
-            )}
+                            <!-- 次の問題ボタン -->
+                            ${gameState.showAnswer ? `
+                                <div class="text-center">
+                                    <button
+                                        onclick="nextQuestion()"
+                                        class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-bold text-xl hover-scale gradient-shadow"
+                                    >
+                                        次の問題へ →
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-            {/* 次の問題ボタン */}
-            {showAnswer && (
-              <div className="text-center">
-                <button
-                  onClick={nextQuestion}
-                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-bold"
-                >
-                  次の問題へ →
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+        function renderResult() {
+            const totalQuestions = categories[gameState.selectedCategory].questions.length;
+            const maxScore = totalQuestions * 10;
+            const percentage = (gameState.score / maxScore) * 100;
+            
+            return `
+                <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4 flex items-center justify-center">
+                    <div class="bg-white rounded-xl p-8 shadow-xl text-center max-w-md">
+                        <div class="text-yellow-500 text-6xl mb-4">🏆</div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                            おつかれさま！
+                        </h2>
+                        <div class="text-6xl mb-4">
+                            ${percentage >= 80 ? '🏆' : percentage >= 60 ? '🥈' : '🏅'}
+                        </div>
+                        <p class="text-xl text-gray-700 mb-4">
+                            スコア: <span class="font-bold text-blue-600">${gameState.score}</span> / ${maxScore}
+                        </p>
+                        <p class="text-gray-600 mb-6">
+                            ${percentage >= 80 ? 'すばらしい！' : 
+                              percentage >= 60 ? 'よくできました！' : 
+                              'がんばったね！もう一度挑戦してみよう！'}
+                        </p>
+                        <div class="flex gap-4 justify-center">
+                            <button
+                                onclick="updateState({currentQuestion: 0, score: 0, currentScene: 'game', feedback: '', showAnswer: false}); render();"
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg"
+                            >
+                                もう一度
+                            </button>
+                            <button
+                                onclick="resetGame()"
+                                class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg"
+                            >
+                                メニューに戻る
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-  if (currentScene === 'result') {
-    const totalQuestions = categories[selectedCategory].questions.length;
-    const maxScore = totalQuestions * 10;
-    const percentage = (score / maxScore) * 100;
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4 flex items-center justify-center">
-        <div className="bg-white rounded-xl p-8 shadow-xl text-center max-w-md">
-          <Trophy className="text-yellow-500 w-16 h-16 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            おつかれさま！
-          </h2>
-          <div className="text-6xl mb-4">
-            {percentage >= 80 ? '🏆' : percentage >= 60 ? '🥈' : '🏅'}
-          </div>
-          <p className="text-xl text-gray-700 mb-4">
-            スコア: <span className="font-bold text-blue-600">{score}</span> / {maxScore}
-          </p>
-          <p className="text-gray-600 mb-6">
-            {percentage >= 80 ? 'すばらしい！' : 
-             percentage >= 60 ? 'よくできました！' : 
-             'がんばったね！もう一度挑戦してみよう！'}
-          </p>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => {
-                setCurrentQuestion(0);
-                setScore(0);
-                setCurrentScene('game');
-                setFeedback('');
-                setShowAnswer(false);
-              }}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg"
-            >
-              もう一度
-            </button>
-            <button
-              onClick={resetGame}
-              className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg"
-            >
-              メニューに戻る
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-};
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (gameState.currentScene === 'menu') {
+                app.innerHTML = renderMenu();
+            } else if (gameState.currentScene === 'game') {
+                app.innerHTML = renderGame();
+            } else if (gameState.currentScene === 'result') {
+                app.innerHTML = renderResult();
+            }
+        }
 
-export default EnglishSpeakingGame;
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            render();
+        });
+        
+        // 確実な初期化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', render);
+        } else {
+            render();
+        }
+    </script>
+</body>
+</html>
