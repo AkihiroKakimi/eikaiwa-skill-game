@@ -6,11 +6,6 @@
     <title>英語でおしゃべりゲーム</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
-        
-        body {
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-        }
         .animate-bounce {
             animation: bounce 1s infinite;
         }
@@ -27,43 +22,6 @@
             90% {
                 transform: translate3d(0,-4px,0);
             }
-        }
-        .hover-scale {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .hover-scale:hover {
-            transform: scale(1.05) translateY(-2px);
-        }
-        .glass-effect {
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .gradient-shadow {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
-        }
-        .pulse-glow {
-            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse-glow {
-            0%, 100% {
-                opacity: 1;
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-            }
-            50% {
-                opacity: 0.8;
-                box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
-            }
-        }
-        .btn-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-        }
-        .game-background {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
         }
     </style>
 </head>
@@ -87,7 +45,7 @@
             animals: {
                 name: '動物たち',
                 emoji: '🐾',
-                color: 'bg-gradient-to-br from-green-400 to-green-600',
+                color: 'bg-green-400',
                 questions: [
                     {
                         question: "What sound does a cat make?",
@@ -122,7 +80,7 @@
             food: {
                 name: '食べもの',
                 emoji: '🍎',
-                color: 'bg-gradient-to-br from-red-400 to-red-600',
+                color: 'bg-red-400',
                 questions: [
                     {
                         question: "What color is an apple?",
@@ -157,7 +115,7 @@
             colors: {
                 name: '色',
                 emoji: '🌈',
-                color: 'bg-gradient-to-br from-purple-400 to-purple-600',
+                color: 'bg-purple-400',
                 questions: [
                     {
                         question: "What color is the sun?",
@@ -317,36 +275,35 @@
             return `
                 <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
                     <div class="max-w-4xl mx-auto">
-                        <div class="text-center mb-12">
-                            <h1 class="text-6xl font-extrabold text-white mb-6 animate-bounce">
+                        <div class="text-center mb-8">
+                            <h1 class="text-4xl font-bold text-white mb-4 animate-bounce">
                                 🎤 英語でおしゃべりゲーム 🎤
                             </h1>
-                            <p class="text-2xl text-white opacity-90 font-semibold">
-                                英語で答えて、スターを集めよう！✨
+                            <p class="text-xl text-white">
+                                英語で答えて、スターを集めよう！
                             </p>
                         </div>
                         
-                        <div class="grid md:grid-cols-3 gap-8 mb-12">
+                        <div class="grid md:grid-cols-3 gap-6">
                             ${Object.entries(categories).map(([key, category]) => `
                                 <button
                                     onclick="selectCategory('${key}')"
-                                    class="${category.color} hover-scale transition-all duration-300 rounded-2xl p-8 text-white font-bold text-xl gradient-shadow border-2 border-white border-opacity-20"
+                                    class="${category.color} hover:scale-105 transform transition-all duration-200 rounded-xl p-6 text-white font-bold text-xl shadow-lg hover:shadow-xl"
                                 >
-                                    <div class="text-5xl mb-4">${category.emoji}</div>
-                                    <div class="text-2xl mb-2">${category.name}</div>
-                                    <div class="text-sm opacity-80 font-medium">
-                                        ${category.questions.length}問にチャレンジ！
+                                    <div class="text-4xl mb-4">${category.emoji}</div>
+                                    <div>${category.name}</div>
+                                    <div class="text-sm mt-2 opacity-90">
+                                        ${category.questions.length}問
                                     </div>
                                 </button>
                             `).join('')}
                         </div>
 
-                        <div class="text-center text-white glass-effect rounded-2xl p-6 max-w-2xl mx-auto gradient-shadow">
-                            <p class="text-xl mb-3 font-semibold">🎯 遊び方</p>
-                            <p class="text-base opacity-90 leading-relaxed">
+                        <div class="text-center mt-8 text-white">
+                            <p class="text-lg mb-2">🎯 遊び方</p>
+                            <p class="text-sm opacity-90">
                                 カテゴリーを選んで、英語で質問に答えよう！<br/>
-                                マイクボタンを押して話すか、答えを見ることもできるよ。<br/>
-                                正解するとスター⭐がもらえるよ！
+                                マイクボタンを押して話すか、答えを見ることもできるよ。
                             </p>
                         </div>
                     </div>
@@ -380,40 +337,40 @@
                         </div>
 
                         <!-- 質問カード -->
-                        <div class="bg-white rounded-3xl p-8 gradient-shadow mb-8">
-                            <div class="text-center mb-8">
-                                <div class="text-8xl mb-6 transform hover:scale-110 transition-transform duration-300">${currentQ.image}</div>
-                                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <div class="bg-white rounded-xl p-8 shadow-xl mb-6">
+                            <div class="text-center mb-6">
+                                <div class="text-6xl mb-4">${currentQ.image}</div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">
                                     ${currentQ.question}
                                 </h2>
-                                <p class="text-xl text-gray-600 font-medium">
+                                <p class="text-gray-600">
                                     ${currentQ.japanese}
                                 </p>
                             </div>
 
                             <!-- 音声読み上げボタン -->
-                            <div class="text-center mb-8">
+                            <div class="text-center mb-6">
                                 <button
                                     onclick="playSound('${currentQ.question.replace(/'/g, "\\'")}')"
-                                    class="btn-gradient hover-scale text-white px-8 py-4 rounded-xl font-bold text-lg gradient-shadow flex items-center gap-3 mx-auto"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto"
                                 >
                                     🔊 質問を聞く
                                 </button>
                             </div>
 
                             <!-- 回答ボタン -->
-                            <div class="flex justify-center gap-6 mb-8 flex-wrap">
+                            <div class="flex justify-center gap-4 mb-6">
                                 <button
                                     onclick="startListening()"
                                     ${gameState.isListening ? 'disabled' : ''}
-                                    class="${gameState.isListening ? 'bg-red-500 pulse-glow' : 'bg-green-500 hover:bg-green-600'} text-white px-8 py-4 rounded-xl font-bold text-lg hover-scale gradient-shadow flex items-center gap-3"
+                                    class="${gameState.isListening ? 'bg-red-500' : 'bg-green-500 hover:bg-green-600'} text-white px-6 py-3 rounded-lg flex items-center gap-2 font-bold"
                                 >
                                     🎤 ${gameState.isListening ? '聞いているよ...' : '英語で答える'}
                                 </button>
                                 
                                 <button
                                     onclick="updateState({showAnswer: !gameState.showAnswer}); render();"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover-scale gradient-shadow"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg"
                                 >
                                     ${gameState.showAnswer ? '答えを隠す' : '答えを見る'}
                                 </button>
@@ -421,18 +378,18 @@
 
                             <!-- 答え表示 -->
                             ${gameState.showAnswer ? `
-                                <div class="text-center bg-gradient-to-r from-yellow-100 to-yellow-200 p-6 rounded-2xl mb-6 border-2 border-yellow-300 gradient-shadow">
-                                    <p class="text-xl font-bold text-gray-800 mb-3">
-                                        答え: <span class="text-blue-600 text-2xl">${currentQ.answer}</span>
+                                <div class="text-center bg-yellow-100 p-4 rounded-lg mb-4">
+                                    <p class="text-lg font-bold text-gray-800">
+                                        答え: <span class="text-blue-600">${currentQ.answer}</span>
                                     </p>
                                     ${currentQ.alternatives.length > 0 ? `
-                                        <p class="text-base text-gray-600 mb-4">
-                                            他の答え: <span class="font-semibold">${currentQ.alternatives.join(', ')}</span>
+                                        <p class="text-sm text-gray-600 mt-2">
+                                            他の答え: ${currentQ.alternatives.join(', ')}
                                         </p>
                                     ` : ''}
                                     <button
                                         onclick="playSound('${currentQ.answer.replace(/'/g, "\\'")}')"
-                                        class="btn-gradient hover-scale text-white px-6 py-3 rounded-xl font-semibold gradient-shadow flex items-center gap-2 mx-auto"
+                                        class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-1 mx-auto"
                                     >
                                         🔊 発音を聞く
                                     </button>
@@ -441,8 +398,8 @@
 
                             <!-- フィードバック -->
                             ${gameState.feedback ? `
-                                <div class="text-center bg-gradient-to-r from-blue-100 to-blue-200 p-6 rounded-2xl mb-6 border-2 border-blue-300 gradient-shadow">
-                                    <p class="text-gray-800 font-semibold text-lg">${gameState.feedback}</p>
+                                <div class="text-center bg-blue-100 p-4 rounded-lg mb-4">
+                                    <p class="text-gray-800">${gameState.feedback}</p>
                                 </div>
                             ` : ''}
 
@@ -451,7 +408,7 @@
                                 <div class="text-center">
                                     <button
                                         onclick="nextQuestion()"
-                                        class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-bold text-xl hover-scale gradient-shadow"
+                                        class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-bold"
                                     >
                                         次の問題へ →
                                     </button>
@@ -522,7 +479,6 @@
             render();
         });
         
-        // 確実な初期化
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', render);
         } else {
